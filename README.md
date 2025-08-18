@@ -1,4 +1,4 @@
-# POSCAR Labeling & Interpolation-Tutorial
+# POSCAR Atom Labeling & Interpolation - Tutorial
 이 튜토리얼은 **grenier phase**에서 강유전성 물질(ferroelectric material)이 외부 전기장에 의해 분극 전환(switching) 되는 과정에서 넘는       
 에너지 장벽(**energy barrier**)를 계산하기 위한 중간 과정(**interpolated structures**)을 만드는 코드에 대한 내용이다.
 <br> <br>

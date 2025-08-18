@@ -237,5 +237,16 @@ print(initial_coords[0])                                 # 실수화 된 Nd 1번
 - lattice vector와 같은 방식으로 3 x 56의 원자 좌표를 한 줄씩, 좌표 한 개씩 쪼개서 실수화 해준다.
 <br><br>
 ### Initial-POSCAR 파일 파싱 끝.
-같은 방법으로**Final-POSCAR 파일** 파싱 해주면 된다. 
-(https://github.com/seorinoh/POSCAR-Labeling-Interpolation-Tutorial/blob/main/poscar_final%20parsing)
+같은 방법으로 **Final-POSCAR 파일** 파싱 해주면 된다.  
+(https://github.com/seorinoh/POSCAR-Labeling-Interpolation-Tutorial/blob/main/poscar_final%20parsing)  
+<br><br><br>
+### 📍2. Atom Labeling  
+비교하는 두 개의 POSCAR 파일에서 **종류가 같은 원자**끼리, **같은 번호**로 원자들 좌표가 정렬되어 있는 지는 알 수 없다.  
+따라서 initial과 final 원자들의 **거리를 하나하나 비교**해 final_POSCAR 파일의 **원자 좌표를 재정렬** 하는 코드가 필요하다.  
+
+아래의 코드는 처음 만든 원자 라벨링 코드이다.  
+/
+결과적으로 원자 라벨링에 오류가 난 것을 확인할 수 있었다.
+
+
+   # (before 원자마다 after 원자 1번과의 거리를 초기 거리로 설정해, after 원자1, 2, 3, 4번 각각의 거리를 초기 거리와 비교하는 방식)

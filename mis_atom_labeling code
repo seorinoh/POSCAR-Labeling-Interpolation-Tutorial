@@ -1,0 +1,46 @@
+# 루트 연산을 위한 모듈
+import math
+
+# 원자 종류마다 첫번째 원자의 좌표 순서(Nd 1번은 s_atom=0)
+s_atom=0
+
+# 재정렬된 코드 
+reafter_coords=[]
+
+# k는 각 원자들의 개수(Nd가 4개, Ca가 8개, Fe가 12개, O가 32개)
+for k in initial_atom_counts:
+
+    # base_atom_num은 final 원자와 비교하는 initial 원자의 순서
+    for base_atom_num in range(k):
+            
+        # 비교할 초기 거리 설정하기(같은 종류 원자끼리만 비교)
+        # 초기 거리 초기화
+        initial_distance = 0
+        # initial 원자마다 같은 종류 final 원자 1번과의 거리를 초기 거리로 설정
+        # (각각의 좌표 읽기-> 좌표 차의 제곱 더하기-> 루트 씌우기)
+        for i, f in zip(initial_coords[s_atom + base_atom_num], final_coords[s_atom]):
+                initial_distance += (i-f)**2
+                initial_distance = math.sqrt(initial_distance)
+
+        # 초기 거리 설정[초기거리, after 원자 순서]
+        initial = [initial_distance,0]
+        
+        # target_atom_num은 비교하는 final 원자 순서
+        for target_atom_num in range(k):
+                
+            # 비교 거리 초기화
+            compare_distance = 0
+            # before 원자 기준 같은 종류의 모든 after 원자와 거리 구하기
+            for i_c, f_c in zip(initial_coords[s_atom+base_atom_num], final_coords[s_atom+target_atom_num]):
+                compare_distance += (i_c-f_c)**2
+                compare_distance = math.sqrt(compare_distance)
+
+                # initial 거리와 compare 거리를 비교해서 compare 거리가 더 가까우면 바꿔 대입
+                if (initial_distance >= compare_distance):
+                    initial[0]=compare_distance
+                    initial[1]=s_atom+target_atom_num
+
+            # 재정렬 코드에 거리가 가장 작았던 순서의 final 원자 좌표를 넣음
+            reafter_coords.append(final_coords[initial[1]])
+        # initial의 Nd 원자 4개에 대해 labeling 끝났으면, +4 해주기 
+        s_atom=s_atom+k

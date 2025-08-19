@@ -399,7 +399,7 @@ for base_atom_num in range(initial_atoms_total):
 ```
 # 56개의 거리 중 최소 거리를 같은 원자로 라벨링
 
-for a in range (final_atoms_total):
+for a in range (initial_atoms_total):
     atom_distance = measured_distance[a]
     min_distance = min(atom_distance)
     min_distance_index = atom_distance.index(min_distance)

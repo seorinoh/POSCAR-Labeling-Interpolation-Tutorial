@@ -315,7 +315,7 @@ initial_POSCAR와 final_POSCAR **같은 원자의 좌표 차이**가 많이 나�
 <br><br><br><br>
 
 ##
-### 원자 labeling 코드  
+### ▪️원자 labeling 코드  
 ##
 <img width="390" height="515" alt="image" src="https://github.com/user-attachments/assets/07d343dd-ada5-48d8-a42f-f072ec866280" />  
 
@@ -487,7 +487,7 @@ initial과 final의 좌표를 알고 있을 때 **두 좌표 사이를 직선**�
 <br><br><br><br>
 
 ##
-### 중간 과정 interpolation 코드  
+### ▪️중간 과정 interpolation 코드  
 ##
 ```
 # (interpolation)선형 보간하는 함수 정의  

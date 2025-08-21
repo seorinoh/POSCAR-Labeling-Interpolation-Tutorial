@@ -308,7 +308,9 @@ initial_POSCAR와 final_POSCAR **같은 원자의 좌표 차이**가 많이 나�
 
 
 위와 같이 **vesta**는 실제 거리를 반영하기 때문에 직육면체의 구조로 표현되고, **실제 원자의 공간적 위치**를 나타낸다.    
-하지만, **POSCAR 파일 원자의 좌표**는 모든 축에 대해 **1.0 스케일로** 표현하기 때문에 오른쪽 그림과 같이 원자의 좌표가 설정되어 있다고 생각하면 된다.
+
+하지만, **POSCAR 파일 원자의 좌표**는 모든 축에 대해 **1.0 스케일로** 표현하기 때문에 오른쪽 그림과 같이  
+실제 거리보다 더 가깝게 원자의 좌표가 설정되어 있다고 생각하면 된다.
 <br><br><br>
 #### 🟦 (2) Solution
 이 문제를 **해결**하기 위해서는 **원자의 좌표 차이**에 **라티스 벡터(3x3) 행렬 곱**을 해주면 된다.  
@@ -617,24 +619,9 @@ print(content)
   
 ##
 ### 📍6. VESTA로 'reordered' & 'interpolation' POSCAR 파일 구조 시각화 
+<br>
 
-코드 실행에 사용한 initial_POSCAR 파일과 final_POSCAR 파일은 서로 **원자 라벨링이 잘 되어있는** 상태였다.  
-<br>  
-
-먼저, 원자 라벨링이 **잘 되어있는 상태**에서 코드를 실행해 보았다.  
-
-<img width="900" height="650" alt="image" src="https://github.com/user-attachments/assets/7826c3fb-5f9c-4ad2-9a7a-704f23c47af7" />  
-
-- 실행 결과, reordered_POSCAR 파일의 경우 final_POSCAR 파일과 **원자의 라벨링이 동일**하게 되어 원자 라벨링이 잘 되었음을 확인하였다.  
-<br>  
-
-VESTA로 확인하였을 때도 원자의 라벨링이 잘 되었음을 확인 할 수 있다.  
-
-<img width="200" height="500" alt="image" src="https://github.com/user-attachments/assets/f076bcd8-01c7-4b85-a11c-577b028f920a" />
-<img width="200" height="500" alt="image" src="https://github.com/user-attachments/assets/920a69dd-6a78-4017-a3f6-d4f3250cac65" />  
-
-- final_POSCAR 파일과 reordered_POSCAR 파일의 **원자 위치**와 **번호**가 **일치**하였다.
-<br>    
+코드 실행에 사용한 initial_POSCAR 파일과 final_POSCAR 파일은 서로 **원자 라벨링이 잘 되어있는** 상태였다.    
 
 ##
 이제 final_POSCAR 파일의 **원자 좌표**를 **임의로 2개만 바꿔서** 코드를 실행시켜 보고  
@@ -651,19 +638,25 @@ VESTA로 확인하였을 때도 원자의 라벨링이 잘 되었음을 확인 �
 <br><br>  
 
 VESTA로 확인하였을 때도 원자의 라벨링이 잘 되었음을 확인 할 수 있다.  
-<img width="450" height="530" alt="image" src="https://github.com/user-attachments/assets/8c3a6f2d-39d7-4572-838f-fa0bce5bf4d9" />  
+
+<img width="700" height="520" alt="image" src="https://github.com/user-attachments/assets/de4f51e2-4a2d-45b5-848b-24f9b8f1a5d1" />
+
 <br><br>  
 
-**중간 과정**은 잘 만들어졌는 지 확인해 보겠다.  
+다음으로, **중간 과정**은 잘 만들어졌는 지 확인해 보겠다.  
 
-<img width="500" height="550" alt="image" src="https://github.com/user-attachments/assets/4ba4a346-fbf8-43b6-8dae-2de7b37fc846" />  
 
-- initial_POSCAR 파일부터 중간 과정들 reordered_POSCAR 파일까지 a축의 라티스 벡터 좌표를 보았을 때 **선형 보간이 잘 되어있음**을 확인 하였다.  
+<img width="550" height="650" alt="image" src="https://github.com/user-attachments/assets/26053450-4916-4f1d-8b67-7f88c6fb0601" />  
+
+- initial_POSCAR 파일부터 중간 과정들 reordered_POSCAR 파일까지 **a축의 라티스 벡터 좌표**와 **Nd 1번 원자 좌표**를 보았을 때,
+
+  **선형 보간이 잘 되어있음**을 확인 하였다.   
 <br><br>
 
 VESTA로 확인하였을 때도 중간 과정이 잘 만들어진 것을 확인 할 수 있다.  
-<br>  
-<img width="900" height="550" alt="image" src="https://github.com/user-attachments/assets/546891df-aee7-4fb0-863c-637723d55f0f" />  
+
+<img width="1200" height="530" alt="image" src="https://github.com/user-attachments/assets/2f13de38-86fc-4507-97d4-e9ef5f693833" />
+
 
 <br><br>
 ---

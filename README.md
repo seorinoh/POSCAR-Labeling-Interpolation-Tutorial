@@ -304,13 +304,14 @@ initial_POSCAR와 final_POSCAR **같은 원자의 좌표 차이**가 많이 나�
   
 이 좌표의 형식이 Direct라면 구조의 실제 거리를 나타내지 못한다.
 
-<img width="450" height="520" alt="image" src="https://github.com/user-attachments/assets/67197b14-81e3-4e54-8072-6c5d54e2a5ac" />
+<img width="450" height="550" alt="image" src="https://github.com/user-attachments/assets/cb023dcc-4bc0-436a-94cd-04d6bc12bb26" />
 
 
-위와 같이 **vesta**는 실제 거리를 반영하기 때문에 직육면체의 구조로 표현되고, **실제 원자의 공간적 위치**를 나타낸다.    
+
+위의 왼쪽 그림과 같이 **vesta**는 실제 거리를 반영하기 때문에 직육면체의 구조로 표현되고, **실제 원자의 공간적 위치**를 나타낸다.    
 
 하지만, **POSCAR 파일 원자의 좌표**는 모든 축에 대해 **1.0 스케일로** 표현하기 때문에 오른쪽 그림과 같이  
-실제 거리보다 더 가깝게 원자의 좌표가 설정되어 있다고 생각하면 된다.
+**실제 거리보다 더 가깝게** 원자의 좌표가 설정되어 있다고 생각하면 된다.
 <br><br><br>
 #### 🟦 (2) Solution
 이 문제를 **해결**하기 위해서는 **원자의 좌표 차이**에 **라티스 벡터(3x3) 행렬 곱**을 해주면 된다.  

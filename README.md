@@ -69,6 +69,7 @@ Anaconda Prompt를 실행하고 `pip install numpy`을 터미널 창에 입력�
 (22)   0.250000000         0.586417383         0.746808995                      .
 (23)   0.750000000         0.413582659         0.253190962                      .
 (24)   0.750000000         0.913579674         0.253187272                      .
+
 ```
 
 ### 추가 설명  
@@ -90,8 +91,9 @@ POSCAR 파일의 **원소 좌표 값**에 **라티스 벡터를 행렬 곱**해�
 
 ## 📌 코드 설명
 ### 📍1. Parsing POSCAR Files
-초기 구조 POSCAR 파일은 Nd, Ca, Fe, O로 이루어진 Pmma 공간군 POSCAR file을 사용하였고,  
-최종 구조 POSCAR 파일은 Nd, Ca, Fe, O로 이루어진 Pmc21 공간군 POSCAR file을 사용하였다.  
+초기 구조 POSCAR 파일은 Nd, Ca, Fe, O로 이루어진 Pmc21 공간군 POSCAR file을 사용하였고,  
+최종 구조 POSCAR 파일은 Nd, Ca, Fe, O로 이루어진 총 4개의 Pmma,Pbcm, Pbam, Cmca 공간군 POSCAR file을 사용하였다.  
+동일한 초기 구조에서 총 4가지의 path로 switching 되는 중간 과정을 구해 각 path에 따른 switching barrier를 확인하였다.
 <br><br>
 ```
 # 현재 디렉터리 위치 확인
@@ -111,7 +113,7 @@ file_list
 ```
 - `os.listdir()`: 현재 디렉터리 안에 있는 파일들의 목록을 확인
   
-python 파일과 interpolation 하기 위한 POSCAR 파일이 들어있어야 한다.  
+python 파일과 interpolation 하기 위한 initial, final POSCAR 파일이 들어있어야 한다.  
 <br><br>
 ```
 # .vasp로 끝나는 파일들만 poscar_files로 지정하고 확인
@@ -127,10 +129,11 @@ POSCAR 파일들만 리스트로 묶여있는지 확인한다.
 ```
 # poscar_files들 중 initial_switching 파일을 지정
 
-poscar_initial = poscar_files[0]
+poscar_initial = poscar_files[1]
 print(poscar_initial)
 ```
 - `poscar_files` 리스트에서 initial_switching으로 쓸 POSCAR 파일을 지정해서 확인한다.  
+  (여기에서는 Pmc21 구조 파일을 poscar_initial로 지정한다.)  
 <br><br>
 ```
 # poscar 파일 내용을 줄마다 정의하기 위해 읽기 모드로 열기
@@ -138,7 +141,7 @@ print(poscar_initial)
 read_initial_lines = open(poscar_initial, 'r')
 initial_lines = read_initial_lines.readlines()
 ```
-- `.readlines()`: POSCAR 파일의 각 줄을 리스트의 요소로 `initial_line`에 저장한다.  
+- `.readlines()`: POSCAR 파일의 각 줄을 리스트의 요소로 `initial_lines`에 저장한다.  
 <br><br>
 
 **POSCAR 파일 각 줄별로 파싱하기.** 
@@ -230,8 +233,10 @@ for i in range(8,64):
     coords_row_list = initial_lines[i].split()           #coords_row_list = [a,b,c] 좌표 리스트
     coords_row = []
     for part in coords_row_list:
-        coords_row.append(float(part))                   # a,b,c 좌표 하나씩 실수화 해서 [a,b,c] 리스트로 만들기<br> 
-    initial_coords.append(coords_row)                    # [a,b,c]/[d,e,f]/... 56개 리스트를 하나의 리스트로 묶음 <br> 
+        coords_row.append(float(part))                   # a,b,c 좌표 하나씩 실수화 해서 [a,b,c] 리스트로 만들기  
+
+    initial_coords.append(coords_row)                    # [a,b,c]/[d,e,f]/... 56개 리스트를 하나의 리스트로 묶음
+
 print(initial_coords[0])                                 # 실수화 된 Nd 1번 좌표 리스트
 ```
 - lattice vector와 같은 방식으로 3 x 56의 원자 좌표를 한 줄씩, 좌표 한 개씩 쪼개서 실수화 해준다.
@@ -242,64 +247,25 @@ print(initial_coords[0])                                 # 실수화 된 Nd 1번
 <br><br><br>
 ##
 ### 📍2. Atom Labeling  
-비교하는 두 개의 POSCAR 파일이 서로 **종류가 같은 원자**끼리, **같은 번호**로 원자들 좌표가 정렬되어 있는 지는 알 수 없다. 
+비교하는 두 개의 POSCAR 파일이 서로 **종류가 같은** 원자끼리, **상대적 위치가 같은**원자끼리   
+**같은 번호**(POSCAR 파일에서 같은 줄)로 원자들 좌표가 정렬되어 있는 지는 알 수 없다. 
 
-따라서 initial과 final 원자들의 **거리를 하나하나 비교**해 final_POSCAR 파일의 **원자 좌표를 재정렬** 하는 코드가 필요하다.  
+따라서 initial 원자를 기준으로 final의 모든 원자들과 **거리를 하나하나 비교**해 final_POSCAR 파일의 **원자 좌표를 재정렬** 하는 코드가 필요하다.  
 <br>  
 아래의 코드는 처음 만든 원자 라벨링 코드이다.  
 (https://github.com/seorinoh/POSCAR-Labeling-Interpolation-Tutorial/blob/main/mis_atom_labeling%20code) <br>  
 위의 코드로는 원자 라벨링에 **오류**가 난 것을 확인할 수 있었다.  
 <br><br><br>
-spyder 프로그램을 통해 코드를 줄 별로 디버그 하면서 찾은 **두 가지** 오류의 원인은 다음과 같다.  
+spyder 프로그램을 통해 코드를 줄 별로 디버그 하면서 찾은 **세 가지** 오류의 원인은 다음과 같다.  
 
-#### (1) 원자의 pbc(periodic boundary conditions) 문제
-#### (2) 원자 좌표가 Direct 형식으로 실제 거리를 반영하지 않는다는 문제
+#### (1) 원자 좌표가 Direct 형식으로 실제 거리를 반영하지 않는다는 문제
+#### (2) 원자의 pbc(periodic boundary conditions) 문제
+#### (3) 원자 switching 정도가 커서 상대적 위치가 다른 원자로 labeling되는 문제
+
 <br><br>
 이제 각 문제들이 왜 발생하는 지, 어떻게 해결했고, 최종적인 코드는 무엇인지 설명하겠다.  
 <br><br>
-#### 🟥 (1) 원자의 pbc(periodic boundary conditions) 문제  
-먼저, POSCAR 파일은 가장 작은 단위의 **구조 하나**에 대한 정보를 담고 있는 파일이다.  
-(VESTA로 POSCAR 파일을 시각화 해보면 직육면체의 **하나의 구조**와 **이 구조 안에 있는 원자들의 위치**를 확인 할 수 있다.)  
-<img width="150" height="500" alt="image" src="https://github.com/user-attachments/assets/d35f3a17-5709-49ee-99a4-4f9e11640235" />
-<br>   
-즉, POSCAR 파일에는 하나의 **구조 안**에 있는 **원자들의 좌표**가 저장되어 있다. 
-
-하지만 구조가 여러 개 모여 물질이 되기 때문에, 사실 구조는 **주기적으로 반복**되어 있다.  
-<br><br>
-(이해를 돕기 위해 2차원 정사각형 구조를 통해 **pbc**에 대해 더 설명하겠다.)  
-
-<img width="363" height="362" alt="image" src="https://github.com/user-attachments/assets/5ec56d5f-884a-46e3-b0aa-82991a5fbc47" />   
-
-- 각 정사각형이 하나의 구조(cell)이라고 가정한다.
-- 5번 cell의 정보를 POSCAR 파일로 가지고 있다고 하자.
-- 5번을 제외한 cell은 5번과 같은 구조가 똑같이 반복된 것이다.
-- 파란색 원이 initial 상태의 원자 1번이라고 하자.
-- 빨간색 원이 final 상태의 원자 1번이라고 하자.
-- 원자 1번이 switching 되면서 왼쪽으로 조금 이동하였다고 하자. 
-<br> 
-5번 cell에 있던 원자 1번은 switching 후 4번 cell로 이동하였음을 알 수 있다.
-
-동시에, 6번 cell에 있던 원자 1번은 switching 후 5번 cell로 넘어왔음을 알 수 있다.  
-<br><br> 
-이렇게 된다면, **final_POSCAR 파일**에는 initial_POSCAR 파일에 있던 5번 cell의 원자 1번이 아니라 **6번 cell의 원자 1번의 좌표**가 저장된다.  
-이것이 **pbc(periodic boundary conditions) 문제**이다.
-
-**동일한 구조가 반복됨** + **POSCAR 파일은 하나의 구조 안에 있는 원자에 대한 좌표를 저장함**으로 인해,  
-initial_POSCAR와 final_POSCAR **같은 원자의 좌표 차이**가 많이 나면서 원자 라벨링에 오류를 일으키는 것이다.    
-<br><br>
-#### 🟦 (1) Solution
-이 문제를 **해결**하기 위해서는 **좌표 차이**를 구해 그 차이가 **0.5보다 크면** 좌표에 **-1**을 해주어 같은 cell에 있던 원자의 위치를 찾아주어야 한다.  
-
-(이해를 돕기 위해 2차원 정사각형 구조를 통해 더 설명하겠다.)  
-
-<img width="1303" height="366" alt="image" src="https://github.com/user-attachments/assets/203908b5-dae4-425f-b070-452501efe6c5" />  
-<br><br>  
-
-- initial_POSCAR 파일과 final_POSCAR 파일의 **원자 좌표 차이**를 구한다.  
-- 이 좌표 차이의 절댓값이 0.5보다 크다면 다른 cell의 원자이기 때문에 좌표 차이를 **반올림**해서 빼주어 같은 cell에 있던 원자 거리를 구할 수 있다.
-<br><br><br><br>
-
-#### 🟥 (2) 원자 좌표가 Direct 형식으로 실제 거리를 반영하지 않는다는 문제  
+#### 🟥 (1) 원자 좌표가 Direct 형식으로 실제 거리를 반영하지 않는다는 문제  
 위에서 POSCAR 파일의 (8)줄은 원소 좌표의 형식이라고 했었다. 
   
 이 좌표의 형식이 Direct라면 구조의 실제 거리를 나타내지 못한다.
@@ -312,10 +278,79 @@ initial_POSCAR와 final_POSCAR **같은 원자의 좌표 차이**가 많이 나�
 
 하지만, **POSCAR 파일 원자의 좌표**는 모든 축에 대해 **1.0 스케일로** 표현하기 때문에 오른쪽 그림과 같이  
 **실제 거리보다 더 가깝게** 원자의 좌표가 설정되어 있다고 생각하면 된다.
-<br><br><br>
-#### 🟦 (2) Solution
+<br><br>
+#### 🟦 (1) Solution
 이 문제를 **해결**하기 위해서는 **원자의 좌표 차이**에 **라티스 벡터(3x3) 행렬 곱**을 해주면 된다.  
 라티스 벡터를 곱해주면서 **실제 원소의 공간적 위치**를 얻을 수 있게 된다.
+<br><br><br><br>
+
+
+
+
+
+#### 🟥 (2) 원자 좌표가 Direct 형식으로 실제 거리를 반영하지 않는다는 문제  
+먼저, POSCAR 파일은 가장 작은 단위의 **구조 하나**에 대한 정보를 담고 있는 파일이다.  
+(VESTA로 POSCAR 파일을 시각화 해보면 직육면체의 **하나의 구조**와 **하나의 구조 안에 있는 원자들의 위치**를 확인 할 수 있다.)  
+<img width="150" height="500" alt="image" src="https://github.com/user-attachments/assets/d35f3a17-5709-49ee-99a4-4f9e11640235" />
+<br>   
+즉, POSCAR 파일에는 **하나의 구조 안**에 있는 **원자들의 좌표**가 저장되어 있다. 
+
+하지만 구조가 **여러 개** 모여 물질이 되기 때문에, 사실 구조는 **주기적으로 반복**되어 있다.  
+<br><br>
+(이해를 돕기 위해 2차원 정사각형 구조를 통해 **pbc**에 대해 더 설명하겠다.)  
+
+<img width="363" height="362" alt="image" src="https://github.com/user-attachments/assets/68fc3c97-4d60-450e-b69b-edc6c17f28b5" />
+
+- 각 정사각형이 하나의 구조(cell)이라고 가정한다.
+- 5번 cell의 정보를 POSCAR 파일로 가지고 있다고 하자.
+- 5번을 제외한 cell은 5번과 같은 구조가 똑같이 반복된 것이다.
+- 파란색 원이 initial 상태의 원자 1번이라고 하자.
+- 빨간색 원이 final 상태의 원자 1번이라고 하자.
+- 원자 1번이 switching 되면서 왼쪽으로 0.2만큼 이동하였다고 하자. 
+<br> 
+5번 cell에 있던 원자 1번(0.1, 0.1)은 switching 후 4번 cell(-0.1, 0.1)로 이동하였음을 알 수 있다.
+
+동시에, 6번 cell에 있던 원자 1번(1.1, 0.1)은 switching 후 5번 cell(0.9, 0.1)로 넘어왔음을 알 수 있다.  
+<br><br> 
+이렇게 된다면, **final_POSCAR 파일**에는 initial_POSCAR 파일에 있던 5번 cell의 원자 1번(-0.1, 0.1)이 아니라  
+**6번 cell의 원자 1번의 좌표**(0.9, 0.1)가 저장된다. 이것이 **pbc(periodic boundary conditions) 문제**이다.  
+
+**동일한 구조가 반복됨** + **POSCAR 파일은 하나의 구조 안에 있는 원자에 대한 좌표를 저장함**으로 인해,  
+switching 정도가 커서 **기존의 구조를 벗어나**게 되면 상대적 위치가 같았던 원자가 라벨링 되지 않는 오류를 일으키는 것이다.  
+<br><br>
+#### 🟦 (2) Solution
+이 문제를 **해결**하기 위해서는 **좌표 차이**를 구해 그 차이가 **0.5보다 크면** 좌표에 **-1**을 해주어   
+상대적 위치가 같은 원자이지만 다른 cell로 넘어간 원자의 위치를 찾아주어야 한다.  
+
+(이해를 돕기 위해 2차원 정사각형 구조를 통해 더 설명하겠다.)  
+
+<img width="1303" height="366" alt="image" src="https://github.com/user-attachments/assets/203908b5-dae4-425f-b070-452501efe6c5" />  
+<br><br>  
+
+- initial_POSCAR 파일과 final_POSCAR 파일의 **원자 좌표 차이**를 구한다.  
+- 이 좌표 차이의 절댓값이 0.5보다 크다면 다른 cell의 원자이기 때문에 좌표 차이를 **반올림**해주고  
+  initial 원자 좌표에서 이 반올림 된 좌표를 빼주어 같은 cell에 있던 원자 거리를 구할 수 있다.
+<br><br><br><br>
+
+#### 🟥 (3) 원자 switching 정도가 커서 상대적 위치가 다른 원자로 labeling되는 문제
+이 문제의 경우는 initial 원자 구조에서 특정 원자가 switching 되는 과정에서 이동 정도가 너무 커서 발생한 문제이다.  
+
+아래의 그림과 같이 **initial 1번 원자를 기준**으로 final 원자들과의 거리를 비교했을 때, switching으로 인한 1번 원자의 **이동 정도가 너무 커서**   
+실제 상대적 위치가 같은 final 1번 원자와의 거리보다 **final 3번 원자**와의 거리가 **더 가까워서** initla의 1번 원자와 상대적 위치가 같은 원자로  
+final의 3번 원자가 잘못 라벨링 되는 문제이다.  
+
+<img width="500" height="200" alt="image" src="https://github.com/user-attachments/assets/4d094e0f-107e-49c0-8f9b-ae58d023f8dd" /><img width="300" height="180" alt="image" src="https://github.com/user-attachments/assets/b40a056b-fed7-4032-8999-9b2fddc66904" />  
+
+<br><br>
+#### 🟦 (3) Solution 
+이 문제는 path 2, 3, 4가 
+이 문제를 **해결**하기 위해서는 path 2, 3, 4에서 atom labeling을 할 때 
+
+<img width="1215" height="217" alt="image" src="https://github.com/user-attachments/assets/625b3905-bdb2-45b1-a519-460f4cc994f2" />
+
+
+
+
 <br><br><br><br>
 
 ##

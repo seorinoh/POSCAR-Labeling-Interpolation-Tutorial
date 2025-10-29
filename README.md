@@ -651,48 +651,7 @@ print(content)
 ```  
 
 ### interpolation_POSCAR 파일들 저장 끝.  
-<br>  
-  
-##
-### 📍6. VESTA로 'reordered' & 'interpolation' POSCAR 파일 구조 시각화 
-<br>
-
-코드 실행에 사용한 initial_POSCAR 파일과 final_POSCAR 파일은 서로 **원자 라벨링이 잘 되어있는** 상태였다.    
-
-##
-이제 final_POSCAR 파일의 **원자 좌표**를 **임의로 2개만 바꿔서** 코드를 실행시켜 보고  
-
-**원자 라벨링**이 잘 되는지, 이때의 reordered_POSCAR을 활용해 **중간 과정**은 잘 만들어지는 지 확인해 보았다.  
-<br>  
-
-<img width="900" height="550" alt="image" src="https://github.com/user-attachments/assets/c6cdd5f3-662d-4ec7-903a-92f0e02c51f7" />  
-<br>  
-
-- initial_POSCAR 파일을 기준으로 final_POSCAR 파일의 **Nd 2번 원자**와 **Fe 1번 원자**의 **좌표를 바꾸어** 저장하고 코드를 실행해보았다.
-
-- 실행 결과 final_POSCAR 파일에서 바꿔놓은 두 원자의 좌표가 reordered_POSCAR 파일에서 **재정렬 되어있는 것**을 확인 하였다.  
-<br><br>  
-
-VESTA로 확인하였을 때도 원자의 라벨링이 잘 되었음을 확인 할 수 있다.  
-
-<img width="700" height="520" alt="image" src="https://github.com/user-attachments/assets/de4f51e2-4a2d-45b5-848b-24f9b8f1a5d1" />
-
-<br><br>  
-
-다음으로, **중간 과정**은 잘 만들어졌는 지 확인해 보겠다.  
-
-
-<img width="550" height="650" alt="image" src="https://github.com/user-attachments/assets/26053450-4916-4f1d-8b67-7f88c6fb0601" />  
-
-- initial_POSCAR 파일부터 중간 과정들 reordered_POSCAR 파일까지 **a축의 라티스 벡터 좌표**와 **Nd 1번 원자 좌표**를 보았을 때,
-
-  **선형 보간이 잘 되어있음**을 확인 하였다.   
-<br><br>
-
-VESTA로 확인하였을 때도 중간 과정이 잘 만들어진 것을 확인 할 수 있다.  
-
-<img width="1200" height="530" alt="image" src="https://github.com/user-attachments/assets/2f13de38-86fc-4507-97d4-e9ef5f693833" />
-
+이렇게 만든 중간 과정들 POSCAR 파일을 이용해 각 과정의 에너지를 구하면 switching barrier를 예측해 볼 수 있다.
 
 <br><br>
 ---

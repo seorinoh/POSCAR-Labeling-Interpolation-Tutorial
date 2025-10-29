@@ -243,7 +243,7 @@ print(initial_coords[0])                                 # 실수화 된 Nd 1번
 <br><br>
 ### initial_POSCAR 파일 파싱 끝.
 같은 방법으로 **final_POSCAR 파일**도 파싱 해주면 된다.  
-(https://github.com/seorinoh/POSCAR-Labeling-Interpolation-Tutorial/blob/main/poscar_final%20parsing)  
+
 <br><br><br>
 ##
 ### 📍2. Atom Labeling  
